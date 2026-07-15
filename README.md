@@ -6,18 +6,37 @@
 
 ## Deployed on Stellar Testnet
 
-The full system is live and the private round-trip is **verified on-chain**. Pool:
-[`CD7EF4GG32IPVS2PGD2LMXEO3TPEWBZRUCBBSPXQ236CD6TMF5S4UUZR`](https://stellar.expert/explorer/testnet/contract/CD7EF4GG32IPVS2PGD2LMXEO3TPEWBZRUCBBSPXQ236CD6TMF5S4UUZR)
-(wired to 5 UltraHonk verifiers). Proven end-to-end:
+The full system is live and the private round-trip is **verified on-chain**. Current pool
+(Lax-Stell build, redeployed 2026-07-15):
+[`CBZNNVUKTG6YSVT3NGV7MDVL5ZQO5D4KLLIRFAGBCORPH7Q62ZHS5RP3`](https://stellar.expert/explorer/testnet/contract/CBZNNVUKTG6YSVT3NGV7MDVL5ZQO5D4KLLIRFAGBCORPH7Q62ZHS5RP3),
+wired to 5 UltraHonk verifiers:
 
-**All six flows are verified live on testnet**, each gated by a real Noir/UltraHonk proof checked inside the Soroban contract:
+| Circuit | Verifier contract |
+|---------|-------------------|
+| `withdraw` | [`CDS245ZQLXFIYD2TPSJWZLAO6TOZOGRF6FQWAJ35J5SG6A7WNMHUMD5B`](https://stellar.expert/explorer/testnet/contract/CDS245ZQLXFIYD2TPSJWZLAO6TOZOGRF6FQWAJ35J5SG6A7WNMHUMD5B) |
+| `transfer` | [`CCTHUAA3I4R2BRUQEFREHQ3AWVLTCZECAZ7JRG5S23FM44LP27RY5NZB`](https://stellar.expert/explorer/testnet/contract/CCTHUAA3I4R2BRUQEFREHQ3AWVLTCZECAZ7JRG5S23FM44LP27RY5NZB) |
+| `place_order` | [`CABWY7YM7C4FCJBGQ7KG47N6NKZOBHWGMHAEYDTOGE6LDPOLZNGR2BF6`](https://stellar.expert/explorer/testnet/contract/CABWY7YM7C4FCJBGQ7KG47N6NKZOBHWGMHAEYDTOGE6LDPOLZNGR2BF6) |
+| `match_orders` | [`CCKOCCPIYRRSCFNGDW3BDOGW4R2V7XY6KYHZVJDFB5KTKR5U3LPMAB5T`](https://stellar.expert/explorer/testnet/contract/CCKOCCPIYRRSCFNGDW3BDOGW4R2V7XY6KYHZVJDFB5KTKR5U3LPMAB5T) |
+| `cancel_order` | [`CCU4JPTB4KRSG2N6YOTPT7SDXMYIC7RJOMEHUCR44FADEBRBWXQTTB2M`](https://stellar.expert/explorer/testnet/contract/CCU4JPTB4KRSG2N6YOTPT7SDXMYIC7RJOMEHUCR44FADEBRBWXQTTB2M) |
 
-- **Bridge** — deposit (root matches the SDK byte-for-byte) and **withdraw** with a real ZK proof ([tx](https://stellar.expert/explorer/testnet/tx/6be9162fa0fc0d1b1fbce175eab97ed90ab3faca486a4f0adad7c7c1b10dda0d)).
+### Live ZK proof — deposit → withdraw round-trip (this pool)
+
+Verified end-to-end on the current pool with a **real Noir/UltraHonk proof** (14,592-byte proof /
+1,760-byte VK, keccak transcript) checked inside the Soroban contract — reproduce with
+`source ./env.sh && scripts/e2e.sh`:
+
+- **Deposit** 1 XLM → shielded note at leaf 0, commitment `0f090472…78e2…f92d0a`
+  ([tx `cdaa631c…`](https://stellar.expert/explorer/testnet/tx/cdaa631c68bedd73a7cf469285e21c4d8ece913100baf9ae6f626db542dca614), SUCCESS).
+- **Withdraw** with a real ZK proof → verified on-chain by the `withdraw` verifier, nullifier
+  `02e885ea…5f85884`, 1 XLM released to the recipient
+  ([tx `d2d2aca3…`](https://stellar.expert/explorer/testnet/tx/d2d2aca363087a082483b905d5e7ae11ede07d934ed9ccfd46ffcfe9c44ad313), SUCCESS).
+
+The remaining flows are gated by the **same UltraHonk verifiers** and were verified live on the prior
+byte-identical build (same VKs, verifier wasm and pool source):
+
 - **Pay** — a 2-in/2-out **shielded transfer**, amounts hidden, value conserved in-circuit ([tx](https://stellar.expert/explorer/testnet/tx/8b8eed61eabd219c9d766f496ec19fc333549868fca2308cf7e63e00b8add90f)).
 - **Swap** — hidden orders **placed**, **matched at the midpoint** ([tx](https://stellar.expert/explorer/testnet/tx/5bc05ebfa3f95849e6c6e3bff8375e6cfe09544e8c3318feb4096f81c7c4bdb3)), and **cancelled** with refund ([tx](https://stellar.expert/explorer/testnet/tx/51023894faf88329a2bd937c55ba05731860a5189aafe998e4964cf9881a4063)).
 - **Soundness**: a tampered proof and a replayed nullifier are both rejected on-chain.
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for every transaction.
 
 Full contract IDs, transactions, and a one-command reproduction are in [DEPLOYMENT.md](./DEPLOYMENT.md).
 
