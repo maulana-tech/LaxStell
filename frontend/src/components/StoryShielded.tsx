@@ -1,4 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
+import ScrollStack, { ScrollStackItem } from './ScrollStack'
+import { BentoSection, SystemArchitecture } from './StorySections'
 import hourglassUrl from '../assets/hourglass.webp'
 import hourglassPoster from '../assets/hourglass-poster.webp'
 import balanceUrl from '../assets/balance.webp'
@@ -6,32 +8,48 @@ import balancePoster from '../assets/balance-poster.webp'
 import lockUrl from '../assets/lock.webp'
 import lockPoster from '../assets/lock-poster.webp'
 
-// Footer's light-variant grain — byte-for-byte identical to Landing.tsx footer.
+// Light-speck film grain for the dark ground (white noise, low alpha) — matches
+// the hero's grain so the whole dark landing reads as one surface.
 const GRAIN =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0.4 0.4 0 -0.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E\")"
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.35 0.35 0.35 0 -0.36'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E\")"
 
 // One card per section — holds the gif and the text together.
-const CARD = 'relative rounded-[1.75rem] border border-[#1b1610]/10 px-6 py-10 sm:px-10 sm:py-12'
-const CARD_BG: CSSProperties = { background: 'rgba(247,244,236,0.55)' }
+const CARD = 'relative rounded-[1.75rem] border border-[#efe9dc]/10 px-6 py-10 sm:px-10 sm:py-12'
+const CARD_BG: CSSProperties = { background: 'rgba(239,233,220,0.04)' }
 
-const BEATS = [
+/** The three narrative beats, presented as a ScrollStack: each card pins near the
+ *  top and scales/stacks under the next as you scroll. `flip` puts the loop on
+ *  the left. */
+const STACK = [
   {
-    label: '01 · SHIELDED',
+    n: '01',
+    label: 'public ledger',
+    coord: '[ every block · forever ]',
+    title: 'public chains remember everything.',
+    body: 'every block on an open chain is permanent, public and linkable — amounts, balances, counterparties, readable by anyone with the address, forever. the ledger never forgets.',
+    src: hourglassUrl,
+    poster: hourglassPoster,
+    flip: false,
+  },
+  {
+    n: '02',
+    label: 'shielded',
     coord: '[ Poseidon2 · Merkle ]',
-    title: 'seal it in a note',
-    body: 'bridge assets in and your balance becomes a Poseidon2 commitment — a note in a Merkle tree. hold private multi-asset balances; amount and owner stay inside the hash, only the root is ever public.',
+    title: 'the shielded layer forgets.',
+    body: 'bridge in and your balance becomes a Poseidon2 commitment — a note in a Merkle tree. amount and owner stay inside the hash; only the root is ever public, and old notes never link to new.',
+    src: balanceUrl,
+    poster: balancePoster,
+    flip: true,
   },
   {
-    label: '02 · PROVEN',
-    coord: '[ UltraHonk · Noir ]',
-    title: 'prove, don’t reveal',
-    body: 'to move, you build a zero-knowledge proof — you own a note, the sums balance, nothing double-spends. no amounts, no addresses leave the circuit. privacy comes from the circuit, not from trust.',
-  },
-  {
-    label: '03 · UNLINKABLE',
-    coord: '[ nullifier · spend ]',
-    title: 'spend a nullifier, stay unlinkable',
-    body: 'every exit is verified inside a Soroban contract over BN254 and Poseidon2 before any funds move. a spend reveals only a nullifier, so the old note and the new never link. no valid proof, no funds move.',
+    n: '03',
+    label: 'proven',
+    coord: '[ UltraHonk · BN254 ]',
+    title: 'the math is the lock.',
+    body: 'every move out is a zero-knowledge proof, checked on-chain inside a Soroban contract. a spend reveals only a nullifier, so the old note and the new never link. no valid proof, no funds move.',
+    src: lockUrl,
+    poster: lockPoster,
+    flip: false,
   },
 ]
 
@@ -63,7 +81,7 @@ function Label({ children, className = '' }: { children: ReactNode; className?: 
 
 export function StoryShielded({ onEnter }: { onEnter: () => void }) {
   return (
-    <section className="relative w-full overflow-hidden bg-[#f4efe4] px-6 py-32 text-[#565243] sm:px-8 md:py-40">
+    <section className="relative w-full overflow-hidden bg-[#17120b] px-6 py-32 text-[#c8bfac] sm:px-8 md:py-40">
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-50"
         style={{
@@ -77,102 +95,70 @@ export function StoryShielded({ onEnter }: { onEnter: () => void }) {
       <div className="relative z-10 mx-auto max-w-6xl">
         {/* intro */}
         <Label>
-          <span className="text-[#3B382D]">public ledger</span>
+          <span className="text-[#d8cfba]">public ledger</span>
           <span aria-hidden className="text-[#b3a081]">→</span>
-          <span className="text-[#3B382D]">shielded layer</span>
+          <span className="text-[#d8cfba]">shielded layer</span>
         </Label>
         <h2
-          className="mt-8 max-w-3xl font-display font-medium lowercase leading-[1.04] tracking-[-0.03em] text-[#24221B]"
+          className="mt-8 max-w-3xl font-display font-medium lowercase leading-[1.04] tracking-[-0.03em] text-[#f1ece0]"
           style={{ fontSize: 'clamp(2rem, 5.4vw, 3.6rem)' }}
         >
           public chains remember everything.{' '}
-          <span className="text-[#565243]">the shielded layer forgets.</span>
+          <span className="text-[#c8bfac]">the shielded layer forgets.</span>
         </h2>
 
-        {/* PUBLIC LEDGER — one card: text + block stack */}
-        <div className={`mt-14 md:mt-16 ${CARD}`} style={CARD_BG}>
-          <div className="grid grid-cols-1 items-center gap-x-12 gap-y-8 md:grid-cols-[0.82fr_1.18fr]">
-            <div className="order-2 max-w-md md:order-1">
-              <p className="text-[15px] font-medium leading-relaxed text-[#565243]">
-                every block on an open chain is permanent, public and linkable — amounts, balances,
-                counterparties, readable by anyone with the address, forever. the ledger never forgets.
-              </p>
-              <Label className="mt-6">
-                <span className="whitespace-nowrap text-[#3B382D]">public ledger</span>
-                <span className="whitespace-nowrap text-[#9A9583]">[ every block · forever ]</span>
-              </Label>
-            </div>
-            <div className="order-1 mx-auto w-[clamp(240px,40vw,460px)] md:order-2">
-              <LoopAsset src={hourglassUrl} poster={hourglassPoster} className="block w-full" />
-            </div>
-          </div>
-        </div>
-
-        {/* SHIELDED CORE — one card: vortex + text */}
-        <div className={`mt-8 ${CARD}`} style={CARD_BG}>
-          <div className="grid grid-cols-1 items-center gap-x-12 gap-y-8 md:grid-cols-[1fr_1fr]">
-            <div className="order-1 mx-auto w-[clamp(220px,34vw,420px)]">
-              <LoopAsset src={balanceUrl} poster={balancePoster} className="block w-full" />
-              <span className="mt-3 block text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#78735F]">
-                <span className="text-[#3B382D]">shielded core</span> · value drawn in
-              </span>
-            </div>
-            <div className="order-2 max-w-md">
-              <h3 className="font-display text-[clamp(1.5rem,3.2vw,2.2rem)] font-medium lowercase leading-[1.08] tracking-[-0.02em] text-[#24221B]">
-                value falls into the pool and disappears.
-              </h3>
-              <p className="mt-5 text-[15px] font-medium leading-relaxed text-[#565243]">
-                lax-stell bridges assets into a shielded layer on Stellar, where value moves behind
-                zero-knowledge proofs verified on-chain by Soroban contracts. no valid proof, no funds move.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* THE CRYPTOGRAPHY — one card: copy + proof beats */}
-        <div className={`mt-8 ${CARD}`} style={CARD_BG}>
-          <Label>
-            <span className="text-[#3B382D]">the cryptography</span>
-            <span className="text-[#9A9583]">[ UltraHonk · Poseidon2 · BN254 ]</span>
-          </Label>
-          <p className="mt-6 max-w-xl text-[15px] font-medium leading-relaxed text-[#565243]">
-            every move out of the shielded layer is a zero-knowledge proof, checked on-chain inside a
-            Soroban contract. privacy comes from the circuit; integrity from the verifier. the math is the lock.
-          </p>
-
-          <div className="mt-10 grid grid-cols-1 items-center gap-x-14 gap-y-12 md:mt-12 md:grid-cols-[0.85fr_1.15fr]">
-            <div className="order-1 mx-auto w-[clamp(220px,30vw,380px)]">
-              <LoopAsset src={lockUrl} poster={lockPoster} className="block w-full" />
-              <span className="mt-3 block text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#78735F]">
-                <span className="text-[#3B382D]">zero-knowledge</span> · the circuit
-              </span>
-            </div>
-
-            <div className="order-2 grid grid-cols-1 gap-y-8">
-              {BEATS.map((b) => (
-                <div key={b.label} className="border-t border-[#1b1610]/12 pt-5">
-                  <div className="flex flex-wrap items-baseline gap-x-3 font-mono text-[11px] uppercase tracking-[0.18em]">
-                    <span className="text-[#3B382D]">{b.label}</span>
-                    <span className="text-[#9A9583]">{b.coord}</span>
+        {/* Three narrative beats as a pinned, scaling card stack (React Bits
+            ScrollStack). Window-scroll mode — its Lenis also drives the page. */}
+        <div className="mt-14 md:mt-16">
+          <ScrollStack
+            useWindowScroll
+            itemDistance={280}
+            itemStackDistance={44}
+            stackPosition="14%"
+            scaleEndPosition="6%"
+            baseScale={0.88}
+            itemScale={0.04}
+            blurAmount={0}
+          >
+            {STACK.map((s) => (
+              <ScrollStackItem
+                key={s.n}
+                itemClassName="flex min-h-[72vh] items-center rounded-[1.75rem] border border-[#efe9dc]/10 bg-[#221b12] px-6 py-12 shadow-[0_30px_80px_-32px_rgba(0,0,0,0.6)] sm:px-14 sm:py-16"
+              >
+                <div className="grid w-full grid-cols-1 items-center gap-x-12 gap-y-8 md:grid-cols-2">
+                  <div className={`mx-auto w-[clamp(210px,32vw,380px)] ${s.flip ? 'md:order-1' : 'md:order-2'}`}>
+                    <LoopAsset src={s.src} poster={s.poster} className="block w-full" />
                   </div>
-                  <h3 className="mt-3 font-display text-[19px] font-medium lowercase leading-[1.1] tracking-[-0.02em] text-[#24221B]">
-                    {b.title}
-                  </h3>
-                  <p className="mt-3 text-[14px] font-medium leading-relaxed text-[#565243]">{b.body}</p>
+                  <div className={`max-w-md ${s.flip ? 'md:order-2' : 'md:order-1'}`}>
+                    <Label>
+                      <span className="text-[#d8cfba]">{s.n} · {s.label}</span>
+                      <span className="text-[#8f846b]">{s.coord}</span>
+                    </Label>
+                    <h3 className="mt-5 font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-medium lowercase leading-[1.05] tracking-[-0.02em] text-[#f1ece0]">
+                      {s.title}
+                    </h3>
+                    <p className="mt-5 text-[15px] font-medium leading-relaxed text-[#c8bfac]">{s.body}</p>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </ScrollStackItem>
+            ))}
+          </ScrollStack>
         </div>
+
+        {/* bento — the platform at a glance, below the three story beats */}
+        <BentoSection />
+
+        {/* system architecture — L1 lock → on-chain verify → shielded settle */}
+        <SystemArchitecture />
 
         {/* modules + CTA — one card */}
         <div className={`mt-8 ${CARD}`} style={CARD_BG}>
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[1rem] border border-[#1b1610]/12 bg-[#1b1610]/12 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[1rem] border border-[#efe9dc]/12 bg-[#efe9dc]/12 sm:grid-cols-4">
             {MODULES.map((m) => (
-              <a key={m.k} href={`#${m.to}`} className="group block bg-[#f4efe4] px-5 py-7 transition hover:bg-[#efe9dc]">
-                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#3B382D]">{m.k}</div>
-                <p className="mt-3 text-[13px] leading-relaxed text-[#565243]">{m.d}</p>
-                <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.18em] text-[#78735F] transition-colors group-hover:text-[#4f3e22]">
+              <a key={m.k} href={`#${m.to}`} className="group block bg-[#221b12] px-5 py-7 transition hover:bg-[#2a2217]">
+                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#d8cfba]">{m.k}</div>
+                <p className="mt-3 text-[13px] leading-relaxed text-[#c8bfac]">{m.d}</p>
+                <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.18em] text-[#8a7f68] transition-colors group-hover:text-[#c9b489]">
                   open →
                 </span>
               </a>
@@ -180,7 +166,7 @@ export function StoryShielded({ onEnter }: { onEnter: () => void }) {
           </div>
           <button
             onClick={onEnter}
-            className="mt-10 font-mono text-[12px] uppercase tracking-[0.18em] text-[#78735F] transition hover:text-[#4f3e22]"
+            className="mt-10 font-mono text-[12px] uppercase tracking-[0.18em] text-[#8a7f68] transition hover:text-[#c9b489]"
           >
             enter the shielded layer →
           </button>

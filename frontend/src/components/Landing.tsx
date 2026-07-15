@@ -56,6 +56,8 @@ function Word({ children }: { children: string }) {
 }
 
 export function Landing({ onEnter }: { onEnter: () => void }) {
+  // Smooth section scrolling is driven by the ScrollStack's window-scroll Lenis
+  // (in StoryShielded), so no separate Lenis instance is mounted here.
   const heroRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -92,7 +94,7 @@ export function Landing({ onEnter }: { onEnter: () => void }) {
           Grain is a separate static overlay; the field's own alpha bleeds the
           bottom edge into the footer cream. */}
       <div className="absolute inset-0">
-        <FluidVolume background="#f4efe4" quality="high" />
+        <FluidVolume background="#17120b" quality="high" />
       </div>
 
       {/* Static film grain — fixed noise, does not shimmer. */}
@@ -156,55 +158,56 @@ export function Landing({ onEnter }: { onEnter: () => void }) {
         <span className="mt-10 font-mono text-[11px] uppercase tracking-[0.3em] text-[#efe9dc]/55">scroll</span>
       </div>
 
-      {/* Clean seam into the footer: a long, gradual cream wash over the bottom
-          (grain, lines and fluid alike) reaching pure #f4efe4 at the boundary so
-          the section change is invisible. Below the z-10 content, so the headline
-          and `scroll` stay crisp; the ramp stays transparent through their band. */}
+      {/* Clean seam into the dark story: a long, gradual wash over the bottom
+          (grain and fluid alike) reaching the story ground #17120b at the
+          boundary so the section change is invisible. Below the z-10 content, so
+          the headline and `scroll` stay crisp; the ramp stays transparent through
+          their band. */}
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[32rem]"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(244,239,228,0) 0%, rgba(244,239,228,0) 44%, rgba(244,239,228,0.28) 64%, rgba(244,239,228,0.62) 80%, rgba(244,239,228,0.9) 92%, #f4efe4 100%)',
+            'linear-gradient(to bottom, rgba(23,18,11,0) 0%, rgba(23,18,11,0) 48%, rgba(23,18,11,0.35) 70%, rgba(23,18,11,0.72) 86%, rgba(23,18,11,0.92) 94%, #17120b 100%)',
         }}
       />
       </section>
 
       <StoryShielded onEnter={onEnter} />
 
-      <footer className="relative flex min-h-screen flex-col justify-between overflow-hidden bg-[#f4efe4] px-8 py-16 text-[#1b1610]">
+      <footer className="relative flex min-h-screen flex-col justify-between overflow-hidden bg-[#17120b] px-8 py-16 text-[#efe9dc]">
         <div
-          className="pointer-events-none absolute inset-0 opacity-50"
+          className="pointer-events-none absolute inset-0 opacity-[0.12]"
           style={{
             backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0.4 0.4 0 -0.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E\")",
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.35 0.35 0.35 0 -0.36'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E\")",
             backgroundSize: '90px 90px',
           }}
         />
 
         <div className="relative flex items-start justify-between">
-          <p className="max-w-xs text-[15px] font-medium leading-snug">
+          <p className="max-w-xs text-[15px] font-medium leading-snug text-[#efe9dc]/80">
             Feel free to reach out if you want private money on Stellar — or simply have a chat.
           </p>
-          <img src={markUrl} alt="Lax-Stell" className="h-11 w-auto opacity-80" style={{ filter: 'brightness(0)' }} />
+          <img src={markUrl} alt="Lax-Stell" className="h-11 w-auto opacity-80" style={{ filter: 'brightness(0) invert(1)' }} />
         </div>
 
         <div className="relative">
           <a
             href="mailto:hello@lax-stell.money"
-            className="block font-display font-light uppercase leading-none tracking-[-0.02em] text-[#b3a081] transition-colors hover:text-[#4f3e22]"
+            className="block font-display font-light uppercase leading-none tracking-[-0.02em] text-[#b3a081] transition-colors hover:text-[#efe9dc]"
             style={{ fontSize: 'clamp(2rem, 8.2vw, 6.5rem)' }}
           >
             hello@lax-stell.money
           </a>
-          <div className="mt-6 h-px w-full bg-[#1b1610]/20" />
+          <div className="mt-6 h-px w-full bg-[#efe9dc]/20" />
         </div>
 
         <div className="relative">
           <div className="flex flex-col gap-12 md:flex-row md:items-end md:justify-between">
-            <nav className="flex gap-6 font-mono text-[13px] uppercase tracking-[0.14em] text-[#1b1610]/70">
-              <a href="#" className="transition hover:text-[#1b1610]">X</a>
-              <a href="#" className="transition hover:text-[#1b1610]">GitHub</a>
-              <a href="#" className="transition hover:text-[#1b1610]">Discord</a>
+            <nav className="flex gap-6 font-mono text-[13px] uppercase tracking-[0.14em] text-[#efe9dc]/70">
+              <a href="#" className="transition hover:text-[#efe9dc]">X</a>
+              <a href="#" className="transition hover:text-[#efe9dc]">GitHub</a>
+              <a href="#" className="transition hover:text-[#efe9dc]">Discord</a>
             </nav>
 
             <div className="grid max-w-2xl grid-cols-1 gap-10 sm:grid-cols-2">
@@ -215,7 +218,7 @@ export function Landing({ onEnter }: { onEnter: () => void }) {
                   </svg>
                   Open source
                 </div>
-                <p className="text-[13px] leading-relaxed text-[#1b1610]/70">
+                <p className="text-[13px] leading-relaxed text-[#efe9dc]/70">
                   Lax-Stell is open source and community-run. We're always looking for cryptographers, Soroban engineers and designers. Reach out with what you'd build.
                 </p>
               </div>
@@ -227,18 +230,18 @@ export function Landing({ onEnter }: { onEnter: () => void }) {
                   </svg>
                   Security
                 </div>
-                <p className="text-[13px] leading-relaxed text-[#1b1610]/70">
+                <p className="text-[13px] leading-relaxed text-[#efe9dc]/70">
                   Found a vulnerability in the circuits or contracts? Disclose it responsibly at security@lax-stell.money — privacy protects everyone.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-14 flex items-center justify-between border-t border-[#1b1610]/12 pt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-[#1b1610]/50">
+          <div className="mt-14 flex items-center justify-between border-t border-[#efe9dc]/12 pt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-[#efe9dc]/50">
             <span>© Lax-Stell 2026</span>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="transition hover:text-[#1b1610]"
+              className="transition hover:text-[#efe9dc]"
             >
               Top ↑
             </button>
