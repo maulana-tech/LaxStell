@@ -55,23 +55,23 @@ relayer for this value; it re-derived trust from the Ethereum sync committee's B
 
 ## Contracts (testnet)
 
-| Contract | ID | Deploy tx |
+| Contract | ID | Deploy tx / Rebranded Redeploy |
 |----------|----|-----------|
 | **EthLightClient** (seeded, period 1292) | [`CCI47AHPL6RETKEDIUGD3XWSBPOHY3IJAZVKBODCBAKZ6UAP27AQ6WH5`](https://stellar.expert/explorer/testnet/contract/CCI47AHPL6RETKEDIUGD3XWSBPOHY3IJAZVKBODCBAKZ6UAP27AQ6WH5) | [`2c13b71b…`](https://stellar.expert/explorer/testnet/tx/2c13b71bd5cc088eaa25767e1bac83be48c86d95b02946932251540bd1b3d581) |
 | **LaxStellBridge** | [`CAY44CMEIJKB2TBVVPFZMEAIDQIROJPB5RIQX5TFQIYCG46WTSWDUXV6`](https://stellar.expert/explorer/testnet/contract/CAY44CMEIJKB2TBVVPFZMEAIDQIROJPB5RIQX5TFQIYCG46WTSWDUXV6) | [`5ee66771…`](https://stellar.expert/explorer/testnet/tx/5ee66771c7dbb817b112fd4be64e8486f9d67e1c2f4706da2dc9ffa3544ef8f7) |
-| **LaxStellPool** (bridge-enabled, has `bridge_mint`) | [`CCVYCO7X7Z3NAJ3U3AAC27Y3VOKJ4YKEKQIP6SJ5UQFH7VMXUMVVYIBX`](https://stellar.expert/explorer/testnet/contract/CCVYCO7X7Z3NAJ3U3AAC27Y3VOKJ4YKEKQIP6SJ5UQFH7VMXUMVVYIBX) | [`2ef74375…`](https://stellar.expert/explorer/testnet/tx/2ef74375746975ff2a3acc43889d2b4cf714dd09d47cd23ae67b7847fade9bdf) |
+| **LaxStellPool** (rebranded redeploy, 2026-07-15) | [`CBZNNVUKTG6YSVT3NGV7MDVL5ZQO5D4KLLIRFAGBCORPH7Q62ZHS5RP3`](https://stellar.expert/explorer/testnet/contract/CBZNNVUKTG6YSVT3NGV7MDVL5ZQO5D4KLLIRFAGBCORPH7Q62ZHS5RP3) | Active pool targeted by the frontend and matching systems. |
 
 `EthLightClient` wasm upload tx: [`bfb57cfb…`](https://stellar.expert/explorer/testnet/tx/bfb57cfbe01b8c63e0c2cc93d6922c0b0f94781bf016ae223e31e56ee9ec4e22) (wasm hash `5bb07f5d9df9c19941bf9765894169917625b3b4236c3aa97da9d69072786cb3`).
 
-### Reused from the prior deployment (`deployments.json`)
+### Active Verifiers from Rebranded Redeploy (`deployments.json`)
 
 | Role | ID |
 |------|----|
-| Verifier · withdraw (reused by `bridge_out` + pool) | `CBKB3P72CTZAGODIKMQRLUJ2INHQULK5J66N6QQR7GCHGDUFCTUPJ6M3` |
-| Verifier · transfer | `CBXOZGAWSLJEXVMHY6WMBDLAJWDESUPOJV2TEAK6F77IYD7EVRDINS6I` |
-| Verifier · place_order | `CDOEXIJR3OE7527IBTBGYX62TNWBIOHMR7IBMWBMBBR6QA4TIXZSBXEE` |
-| Verifier · match_orders | `CB5HNMW6IIMLQPSAKAC3ADTDHEOTKX6EHYCXNK5EITTFMO33BMD2EKM4` |
-| Verifier · cancel_order | `CAI6B5ZTWOGJIBLNMOG67H3MAPSORU64ZEXBB7YYQ6TQ5RQJMSQQSA3B` |
+| Verifier · withdraw (reused by `bridge_out` + pool) | `CDS245ZQLXFIYD2TPSJWZLAO6TOZOGRF6FQWAJ35J5SG6A7WNMHUMD5B` |
+| Verifier · transfer | `CCTHUAA3I4R2BRUQEFREHQ3AWVLTCZECAZ7JRG5S23FM44LP27RY5NZB` |
+| Verifier · place_order | `CABWY7YM7C4FCJBGQ7KG47N6NKZOBHWGMHAEYDTOGE6LDPOLZNGR2BF6` |
+| Verifier · match_orders | `CCKOCCPIYRRSCFNGDW3BDOGW4R2V7XY6KYHZVJDFB5KTKR5U3LPMAB5T` |
+| Verifier · cancel_order | `CCU4JPTB4KRSG2N6YOTPT7SDXMYIC7RJOMEHUCR44FADEBRBWXQTTB2M` |
 | Native XLM SAC | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` |
 
 ### Wiring (verified on-chain)
@@ -79,10 +79,10 @@ relayer for this value; it re-derived trust from the Ethereum sync committee's B
 ```
 pool.bridge()          = CAY44CME… (LaxStellBridge)      ← set_bridge tx df44eec6…
 bridge.light_client()  = CCI47AHP… (EthLightClient)
-bridge.pool()          = CCVYCO7X… (LaxStellPool)
+bridge.pool()          = CBZNNVUK… (LaxStellPool)
 bridge.l1_chain_id()   = 11155111  (Sepolia)
 bridge.l1_bridge_addr()= 0x0000000000000000000000000000000000000000  (placeholder — L1 pending)
-bridge.withdraw_vf()   = CBKB3P72… (UltraHonk withdraw verifier)
+bridge.withdraw_vf()   = CDS245ZQ… (UltraHonk withdraw verifier)
 ```
 
 ---

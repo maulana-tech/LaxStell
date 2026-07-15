@@ -6,8 +6,8 @@ import { BridgeInSubmitter } from "../src/inclusion.js";
 import { minimalUpdate } from "./fixtures.js";
 import type { Hex } from "viem";
 
-const LC_ID = "CD7EF4GG32IPVS2PGD2LMXEO3TPEWBZRUCBBSPXQ236CD6TMF5S4UUZR";
-const BRIDGE_ID = "CBKB3P72CTZAGODIKMQRLUJ2INHQULK5J66N6QQR7GCHGDUFCTUPJ6M3";
+const LC_ID = "CCI47AHPL6RETKEDIUGD3XWSBPOHY3IJAZVKBODCBAKZ6UAP27AQ6WH5";
+const BRIDGE_ID = "CAY44CMEIJKB2TBVVPFZMEAIDQIROJPB5RIQX5TFQIYCG46WTSWDUXV6";
 
 /** Extract { fn, argc } from a contract-invoke operation. */
 function invokeInfo(op: xdr.Operation): { fn: string; argc: number } {
