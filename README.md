@@ -27,7 +27,6 @@
   <a href="#quick-start">Quick Start</a>
 </p>
 
-> ⚠️ **Testnet only · unaudited · never use with real funds.** Lax-Stell is research/educational software built for the **Stellar Hacks: Real-World ZK** hackathon. It inherits the testnet-only constraint of experimental cryptography on Soroban.
 
 ---
 
