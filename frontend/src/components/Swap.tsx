@@ -14,8 +14,8 @@ import {
   ChevronDownIcon,
   Field,
   PageIntro,
-  SectionHeading,
   Select,
+  ShieldIcon,
   TextInput,
   ToggleGroup,
   XIcon,
@@ -31,7 +31,9 @@ function timeAgo(timestamp: number): string {
   return `${hours}h ago`
 }
 
-function OrderRow({
+// ── Open Orders table ──────────────────────────────────────────────────────
+
+function OrderTableRow({
   order,
   canceling,
   onCancel,
@@ -41,120 +43,91 @@ function OrderRow({
   onCancel: () => void
 }) {
   const buy = order.side === 'buy'
-  return (
-    <li className="flex items-center gap-4 py-3.5">
-      <Badge tone={buy ? 'accent' : 'neutral'} className="uppercase">
-        {order.side}
-      </Badge>
-      <div className="min-w-0">
-        <div className="text-sm font-medium text-zinc-100">{order.pair}</div>
-        <div className="text-xs text-zinc-500">
-          filled {order.filled} / {order.amount} · {timeAgo(order.createdAt)}
-        </div>
-      </div>
-      <div className="ml-auto text-right">
-        <div className="font-mono text-sm tabular-nums text-zinc-100">
-          {order.price} {order.quote}
-        </div>
-        <div className="text-xs text-zinc-500">
-          {order.amount} {order.base}
-        </div>
-      </div>
-      <Button variant="outline" size="sm" loading={canceling} onClick={onCancel}>
-        Cancel
-      </Button>
-    </li>
-  )
-}
+  const filledNum = parseFloat(order.filled)
+  const totalNum = parseFloat(order.amount)
+  const fillPct = totalNum > 0 ? Math.round((filledNum / totalNum) * 100) : 0
 
-function OrderSkeleton() {
   return (
-    <ul className="divide-y divide-ink-800">
-      {[0, 1].map((i) => (
-        <li key={i} className="flex items-center gap-4 py-3.5">
-          <div className="h-6 w-12 animate-pulse rounded-full bg-ink-700" />
-          <div className="space-y-2">
-            <div className="h-3.5 w-20 animate-pulse rounded bg-ink-700" />
-            <div className="h-2.5 w-28 animate-pulse rounded bg-ink-800" />
+    <tr className="group border-b border-ink-800 last:border-0 transition-colors hover:bg-ink-800/25">
+      <td className="py-3 pl-5 pr-3">
+        <Badge tone={buy ? 'accent' : 'neutral'} className="uppercase">
+          {order.side}
+        </Badge>
+      </td>
+      <td className="py-3 px-3">
+        <span className="text-sm font-semibold text-zinc-100">{order.base}</span>
+        <span className="mx-1 text-zinc-600">/</span>
+        <span className="text-sm text-zinc-400">{order.quote}</span>
+      </td>
+      <td className="py-3 px-3 text-right font-mono text-sm tabular-nums text-zinc-100">
+        {order.price}
+        <span className="ml-1 text-xs text-zinc-500">{order.quote}</span>
+      </td>
+      <td className="py-3 px-3 text-right font-mono text-sm tabular-nums text-zinc-100">
+        {order.amount}
+        <span className="ml-1 text-xs text-zinc-500">{order.base}</span>
+      </td>
+      <td className="py-3 px-3">
+        <div className="flex items-center justify-end gap-2">
+          <div className="h-1.5 w-16 overflow-hidden rounded-full bg-ink-700">
+            <div
+              className={cx(
+                'h-full rounded-full transition-all',
+                buy ? 'bg-spectral/60' : 'bg-zinc-500',
+              )}
+              style={{ width: `${fillPct}%` }}
+            />
           </div>
-          <div className="ml-auto h-7 w-16 animate-pulse rounded bg-ink-800" />
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-/** Open orders — a companion panel beside the order form. Collapses to a
- *  full-height vertical band on the side; controlled by the parent so the row
- *  can animate the recentre when it opens / closes. */
-function OpenOrders({
-  orders,
-  loadingOrders,
-  cancelingId,
-  onCancel,
-  open,
-  onToggle,
-}: {
-  orders: OpenOrder[]
-  loadingOrders: boolean
-  cancelingId: string | null
-  onCancel: (id: string) => void
-  open: boolean
-  onToggle: () => void
-}) {
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-label="Expand open orders"
-        className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl border border-ink-700 bg-ink-900/40 py-4 transition hover:border-spectral/40"
-      >
-        <ChartIcon className="h-4 w-4 shrink-0 text-spectral/70" />
-        <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400 rotate-180 [writing-mode:vertical-rl]">
-          Open orders · {orders.length}
-        </span>
-      </button>
-    )
-  }
-
-  return (
-    <Card className="h-fit w-full p-5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h3 className="panel-title text-sm">Open orders</h3>
-          <span className="font-mono text-xs text-zinc-500">{orders.length}</span>
+          <span className="w-8 text-right font-mono text-xs tabular-nums text-zinc-400">
+            {fillPct}%
+          </span>
         </div>
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-label="Collapse open orders"
-          className="text-zinc-500 transition hover:text-zinc-200"
-        >
-          <ChevronDownIcon className="h-4 w-4 -rotate-90" />
-        </button>
-      </div>
-      <div className="mt-2 max-h-[50vh] overflow-auto">
-        {loadingOrders ? (
-          <OrderSkeleton />
-        ) : orders.length === 0 ? (
-          <p className="py-10 text-center text-sm text-zinc-500">No open orders.</p>
-        ) : (
-          <ul className="divide-y divide-ink-800">
-            {orders.map((order) => (
-              <OrderRow
-                key={order.id}
-                order={order}
-                canceling={cancelingId === order.id}
-                onCancel={() => void onCancel(order.id)}
-              />
-            ))}
-          </ul>
-        )}
-      </div>
-    </Card>
+      </td>
+      <td className="py-3 px-3 text-right text-xs text-zinc-500">
+        {timeAgo(order.createdAt)}
+      </td>
+      <td className="py-3 pl-3 pr-5 text-right">
+        <Button variant="outline" size="sm" loading={canceling} onClick={onCancel}>
+          Cancel
+        </Button>
+      </td>
+    </tr>
   )
 }
+
+function OrderTableSkeleton() {
+  return (
+    <>
+      {[0, 1, 2].map((i) => (
+        <tr key={i} className="border-b border-ink-800 last:border-0">
+          <td className="py-3.5 pl-5 pr-3">
+            <div className="h-5 w-10 animate-pulse rounded-full bg-ink-700" />
+          </td>
+          <td className="py-3.5 px-3">
+            <div className="h-3.5 w-20 animate-pulse rounded bg-ink-700" />
+          </td>
+          <td className="py-3.5 px-3">
+            <div className="ml-auto h-3.5 w-14 animate-pulse rounded bg-ink-700" />
+          </td>
+          <td className="py-3.5 px-3">
+            <div className="ml-auto h-3.5 w-14 animate-pulse rounded bg-ink-700" />
+          </td>
+          <td className="py-3.5 px-3">
+            <div className="ml-auto h-3 w-20 animate-pulse rounded-full bg-ink-800" />
+          </td>
+          <td className="py-3.5 px-3">
+            <div className="ml-auto h-3 w-12 animate-pulse rounded bg-ink-800" />
+          </td>
+          <td className="py-3.5 pl-3 pr-5">
+            <div className="ml-auto h-7 w-14 animate-pulse rounded-lg bg-ink-800" />
+          </td>
+        </tr>
+      ))}
+    </>
+  )
+}
+
+// ── Main component ─────────────────────────────────────────────────────────
 
 export function Swap({ embedded }: { embedded?: boolean } = {}) {
   const { sdk, orders, loadingOrders, refreshOrders, refreshBalances } = useLaxStell()
@@ -223,158 +196,303 @@ export function Swap({ embedded }: { embedded?: boolean } = {}) {
   }
 
   return (
-    <div className={embedded ? 'space-y-5' : 'space-y-6'}>
+    <div className={embedded ? 'space-y-4' : 'space-y-6'}>
       {!embedded && (
-        <PageIntro title="Swap" subtitle="Dark-pool DEX. Orders stay sealed until matched, so there is no front-running." />
+        <PageIntro
+          title="Swap"
+          subtitle="Dark-pool DEX. Orders stay sealed until matched, so there is no front-running."
+        />
       )}
 
-      <div className="flex items-stretch justify-center gap-4">
+      {/* ── Top row: Chart + Order form ───────────────────────────────── */}
+      <div className="flex items-stretch gap-4">
+
+        {/* ── Chart panel ────────────────────────────────────────────── */}
         <div
           className={cx(
-            'hidden shrink-0 overflow-hidden transition-[width] duration-300 ease-out lg:block',
-            showChart ? 'w-[22rem]' : 'w-12',
+            'hidden shrink-0 overflow-hidden transition-[width] duration-300 ease-out lg:flex lg:flex-col',
+            showChart ? 'flex-1 min-w-0' : 'w-11',
           )}
         >
           {showChart ? (
-            <Card className="flex h-full flex-col p-4">
-              <div className="mb-1 flex items-center justify-between">
-                <div className="flex min-w-0 items-center gap-2">
-                  <ChartIcon className="h-4 w-4 shrink-0 text-zinc-500" />
-                  <span className="panel-title whitespace-nowrap text-sm">
-                    {base} / {quote}
-                  </span>
-                  {marketPrice != null && (
-                    <span className="truncate font-mono text-[11px] tabular-nums text-zinc-300">
+            <Card className="flex h-full flex-col overflow-hidden p-0">
+              {/* Market header bar */}
+              <div className="flex items-center gap-3 border-b border-ink-700/60 px-5 py-3.5">
+                {/* Pair */}
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-sm font-semibold text-zinc-100">{base}</span>
+                  <span className="font-mono text-zinc-600">/</span>
+                  <span className="text-sm text-zinc-400">{quote}</span>
+                </div>
+
+                {/* Divider */}
+                <span className="h-4 w-px bg-ink-700" />
+
+                {/* Price + live badge */}
+                {marketPrice != null ? (
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-base font-semibold tabular-nums text-zinc-100">
                       {formatPrice(marketPrice)}
                     </span>
-                  )}
-                  <span
-                    className={cx(
-                      'font-mono text-[10px] uppercase tracking-[0.16em]',
-                      livePrice ? 'text-spectral/70' : 'text-zinc-600',
-                    )}
-                  >
-                    {livePrice ? 'live' : 'est'}
-                  </span>
-                </div>
+                    <span className="text-xs text-zinc-500">{quote}</span>
+                    <span
+                      className={cx(
+                        'rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em]',
+                        livePrice
+                          ? 'bg-spectral/10 text-spectral/80'
+                          : 'bg-ink-800 text-zinc-600',
+                      )}
+                    >
+                      {livePrice ? '● live' : 'est'}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="h-4 w-24 animate-pulse rounded bg-ink-700" />
+                )}
+
+                {/* Hide chart button */}
                 <button
                   type="button"
                   onClick={() => setShowChart(false)}
                   aria-label="Hide chart"
-                  className="text-zinc-500 transition hover:text-zinc-200"
+                  className="ml-auto flex h-7 w-7 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-ink-800 hover:text-zinc-300"
                 >
-                  <XIcon className="h-4 w-4" />
+                  <XIcon className="h-3.5 w-3.5" />
                 </button>
               </div>
-              <div className="min-h-0 flex-1">
+
+              {/* Chart body */}
+              <div className="min-h-[300px] flex-1 p-2">
                 <PriceChart pair={`${base}/${quote}`} price={marketPrice} />
               </div>
             </Card>
           ) : (
+            /* Collapsed chart strip */
             <button
               type="button"
               onClick={() => setShowChart(true)}
-              aria-label="Add chart"
+              aria-label="Show chart"
               className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl border border-ink-700 bg-ink-900/40 py-4 transition hover:border-spectral/40"
             >
               <ChartIcon className="h-4 w-4 shrink-0 text-spectral/70" />
-              <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400 [writing-mode:vertical-rl]">
+              <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500 rotate-180 [writing-mode:vertical-rl]">
                 Chart
               </span>
             </button>
           )}
         </div>
 
-        <Card className="w-full shrink-0 self-start p-6 lg:w-[26rem]">
-          <SectionHeading icon={<ChartIcon className="h-4 w-4" />} title="Place order" />
+        {/* ── Order form ─────────────────────────────────────────────── */}
+        <div className="w-full shrink-0 lg:w-[22rem]">
+          <Card className="flex h-full flex-col gap-0 p-0 overflow-hidden">
 
-          <div className="mb-4 mt-3 grid grid-cols-2 gap-3">
-            <Field label="Base">
-              <Select value={base} onChange={(e) => setBase(e.target.value)} options={TOKEN_OPTIONS} />
-            </Field>
-            <Field label="Quote">
-              <Select value={quote} onChange={(e) => setQuote(e.target.value)} options={TOKEN_OPTIONS} />
-            </Field>
-          </div>
-          {base === quote && <p className="mb-3 text-xs text-spectral/80">Pick two different tokens.</p>}
-
-          <div className="space-y-4">
-            <ToggleGroup
-              value={side}
-              onChange={setSide}
-              options={[
-                { value: 'buy', label: 'Buy' },
-                { value: 'sell', label: 'Sell' },
-              ]}
-            />
-            <Field
-              label={`Price (${quote} per ${base})`}
-              hint={
-                marketPrice != null ? (
-                  <span className="flex items-center gap-1.5">
-                    <span>
-                      Market{' '}
-                      <span className="font-mono tabular-nums text-zinc-300">
-                        {formatPrice(marketPrice)}
-                      </span>{' '}
-                      {quote} · {livePrice ? 'live' : 'est'}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={useMarketPrice}
-                      className="font-mono text-spectral/80 transition hover:text-spectral"
-                    >
-                      use
-                    </button>
-                  </span>
-                ) : undefined
-              }
-            >
-              <TextInput
-                mono
-                inputMode="decimal"
-                placeholder="0.0000"
-                value={price}
-                onChange={(e) => onPriceChange(e.target.value)}
-              />
-            </Field>
-            <Field label={`Amount (${base})`}>
-              <TextInput
-                mono
-                inputMode="decimal"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </Field>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-500">Est. {side === 'buy' ? 'cost' : 'proceeds'}</span>
-              <span className="font-mono tabular-nums text-zinc-200">
-                {formatAmount(total)} {quote}
-              </span>
+            {/* Form header */}
+            <div className="flex items-center justify-between border-b border-ink-700/60 px-5 py-3.5">
+              <div className="flex items-center gap-2">
+                <ChartIcon className="h-4 w-4 text-zinc-500" />
+                <h2 className="panel-title">Place order</h2>
+              </div>
+              {/* ZK privacy badge */}
+              <div className="flex items-center gap-1.5 rounded-full border border-spectral/20 bg-spectral/10 px-2.5 py-1">
+                <ShieldIcon className="h-3 w-3 text-spectral/70" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-spectral/70">
+                  ZK sealed
+                </span>
+              </div>
             </div>
-            <Button className="w-full" disabled={!valid} onClick={() => void onPlace()}>
-              Place order
-            </Button>
-          </div>
-        </Card>
 
-        <div
-          className={cx(
-            'hidden shrink-0 overflow-hidden transition-[width] duration-300 ease-out lg:block',
-            ordersOpen ? 'w-72' : 'w-12',
-          )}
-        >
-          <OpenOrders
-            orders={orders}
-            loadingOrders={loadingOrders}
-            cancelingId={cancelingId}
-            onCancel={onCancel}
-            open={ordersOpen}
-            onToggle={() => setOrdersOpen((v) => !v)}
-          />
+            {/* Form body */}
+            <div className="flex flex-col gap-4 p-5">
+              {/* Buy / Sell toggle — prominent, semantic colors */}
+              <ToggleGroup
+                value={side}
+                onChange={setSide}
+                options={[
+                  {
+                    value: 'buy',
+                    label: 'Buy',
+                    activeClassName:
+                      'bg-patina-300/15 text-patina-300 shadow-[inset_0_0_0_1px_rgba(214,197,124,0.35)]',
+                  },
+                  {
+                    value: 'sell',
+                    label: 'Sell',
+                    activeClassName:
+                      'bg-red-500/15 text-red-300 shadow-[inset_0_0_0_1px_rgba(239,68,68,0.3)]',
+                  },
+                ]}
+              />
+
+              {/* Token pair selectors */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <Field label="Base asset">
+                  <Select
+                    value={base}
+                    onChange={(e) => setBase(e.target.value)}
+                    options={TOKEN_OPTIONS}
+                  />
+                </Field>
+                <Field label="Quote asset">
+                  <Select
+                    value={quote}
+                    onChange={(e) => setQuote(e.target.value)}
+                    options={TOKEN_OPTIONS}
+                  />
+                </Field>
+              </div>
+              {base === quote && (
+                <p className="-mt-1 text-xs text-spectral/80">Pick two different tokens.</p>
+              )}
+
+              {/* Price */}
+              <Field
+                label={`Limit price (${quote} per ${base})`}
+                hint={
+                  marketPrice != null ? (
+                    <span className="flex items-center gap-1.5">
+                      <span>
+                        Market{' '}
+                        <span className="font-mono tabular-nums text-zinc-300">
+                          {formatPrice(marketPrice)}
+                        </span>{' '}
+                        {quote} · {livePrice ? 'live' : 'est'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={useMarketPrice}
+                        className="font-mono text-spectral/80 transition hover:text-spectral"
+                      >
+                        use
+                      </button>
+                    </span>
+                  ) : undefined
+                }
+              >
+                <TextInput
+                  mono
+                  inputMode="decimal"
+                  placeholder="0.0000"
+                  value={price}
+                  onChange={(e) => onPriceChange(e.target.value)}
+                />
+              </Field>
+
+              {/* Amount */}
+              <Field label={`Amount (${base})`}>
+                <TextInput
+                  mono
+                  inputMode="decimal"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </Field>
+
+              {/* Estimated total — styled as an inset info row */}
+              <div className="flex items-center justify-between rounded-xl border border-ink-700/50 bg-ink-900/50 px-4 py-3">
+                <span className="text-xs text-zinc-500">
+                  Est. {side === 'buy' ? 'cost' : 'proceeds'}
+                </span>
+                <span className="font-mono text-sm tabular-nums text-zinc-200">
+                  {formatAmount(total)} {quote}
+                </span>
+              </div>
+
+              {/* Place order CTA */}
+              <Button
+                className="w-full"
+                disabled={!valid}
+                onClick={() => void onPlace()}
+              >
+                {side === 'buy' ? `Buy ${base}` : `Sell ${base}`}
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
+
+      {/* ── Bottom: Open orders (full-width, table layout) ────────────── */}
+      <Card className="overflow-hidden p-0">
+        {/* Section header */}
+        <div className="flex items-center gap-3 border-b border-ink-700/60 px-5 py-3.5">
+          <ChartIcon className="h-4 w-4 shrink-0 text-zinc-500" />
+          <h3 className="panel-title">Open orders</h3>
+          {/* Count pill */}
+          <span className="rounded-full bg-ink-800 px-2.5 py-0.5 font-mono text-xs text-zinc-400">
+            {orders.length}
+          </span>
+          <button
+            type="button"
+            onClick={() => setOrdersOpen((v) => !v)}
+            aria-label={ordersOpen ? 'Collapse orders' : 'Expand orders'}
+            className="ml-auto flex h-7 w-7 items-center justify-center rounded-lg text-zinc-600 transition hover:bg-ink-800 hover:text-zinc-300"
+          >
+            <ChevronDownIcon
+              className={cx(
+                'h-4 w-4 transition-transform duration-200',
+                ordersOpen ? '' : '-rotate-90',
+              )}
+            />
+          </button>
+        </div>
+
+        {/* Orders table */}
+        {ordersOpen && (
+          <div className="overflow-x-auto">
+            {loadingOrders ? (
+              <table className="w-full">
+                <tbody>
+                  <OrderTableSkeleton />
+                </tbody>
+              </table>
+            ) : orders.length === 0 ? (
+              <div className="flex flex-col items-center justify-center gap-2 py-14 text-center">
+                <ChartIcon className="h-8 w-8 text-zinc-700" />
+                <p className="text-sm text-zinc-500">No open orders.</p>
+                <p className="text-xs text-zinc-600">Place an order above to get started.</p>
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-ink-800">
+                    <th className="py-2.5 pl-5 pr-3 text-left font-mono text-[10px] uppercase tracking-wider text-zinc-600">
+                      Side
+                    </th>
+                    <th className="py-2.5 px-3 text-left font-mono text-[10px] uppercase tracking-wider text-zinc-600">
+                      Pair
+                    </th>
+                    <th className="py-2.5 px-3 text-right font-mono text-[10px] uppercase tracking-wider text-zinc-600">
+                      Price
+                    </th>
+                    <th className="py-2.5 px-3 text-right font-mono text-[10px] uppercase tracking-wider text-zinc-600">
+                      Amount
+                    </th>
+                    <th className="py-2.5 px-3 text-right font-mono text-[10px] uppercase tracking-wider text-zinc-600">
+                      Filled
+                    </th>
+                    <th className="py-2.5 px-3 text-right font-mono text-[10px] uppercase tracking-wider text-zinc-600">
+                      Time
+                    </th>
+                    <th className="py-2.5 pl-3 pr-5 text-right font-mono text-[10px] uppercase tracking-wider text-zinc-600">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((order) => (
+                    <OrderTableRow
+                      key={order.id}
+                      order={order}
+                      canceling={cancelingId === order.id}
+                      onCancel={() => void onCancel(order.id)}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+      </Card>
 
       <ProofProgress
         flow={proof}

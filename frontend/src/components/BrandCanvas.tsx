@@ -13,8 +13,8 @@ function currentShape(): FluidShape {
  *  horizontal (price) hairlines, the horizontals a touch stronger like price
  *  levels. Edges fade out so it reads as atmosphere, not a hard sheet. */
 function ChartGrid({ dark }: { dark: boolean }) {
-  const v = dark ? 'rgba(239,233,220,0.05)' : 'rgba(40,36,28,0.045)' // vertical / time
-  const h = dark ? 'rgba(239,233,220,0.08)' : 'rgba(40,36,28,0.07)' //  horizontal / price
+  const v = dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'    // vertical / time
+  const h = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.065)'  //  horizontal / price
   const fade = 'radial-gradient(130% 100% at 50% 32%, #000 42%, transparent 100%)'
   return (
     <div
@@ -41,11 +41,10 @@ function ChartGrid({ dark }: { dark: boolean }) {
 export function BrandCanvas() {
   const dark = useIsDark()
   const shape = currentShape()
-  // Dark: warm gold plumes on near-black. Light: a faint warm haze on the
-  // broken-white ground — same shape, tuned so it stays atmosphere, not noise.
-  const bg = dark ? '#1c1710' : '#f6f5f2'
-  const base = dark ? '#4f3e22' : '#c3b493'
-  const scrim = dark ? 'rgba(28,23,16,0.6)' : 'rgba(246,245,242,0.34)'
+  // Dark: neutral dark gray. Light: neutral off-white. No warm cast.
+  const bg   = dark ? '#0d0d0d' : '#f6f6f6'
+  const base = dark ? '#383838' : '#aaaaaa'
+  const scrim = dark ? 'rgba(13,13,13,0.62)' : 'rgba(246,246,246,0.35)'
   return (
     <div className="pointer-events-none fixed inset-0 -z-10" style={{ background: bg }}>
       {/* key={theme} remounts the shader so its baseColor/background uniforms

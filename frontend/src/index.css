@@ -5,88 +5,87 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
- * Theme tokens — every Mist/Halo/Patina/warm-zinc shade as an `R G B` triplet.
- * :root is the LIGHT theme (a bright sepia fog); `.dark` reflects the ramp back
- * to the original dark "Mist" world. The whole app reads these through Tailwind
- * (bg-ink-*, text-zinc-*, text-spectral, patina-*, …), so it flips with the class.
+ * Theme tokens — neutral gray scale, no warm/sepia tint.
+ * :root = LIGHT theme, .dark = DARK theme.
+ * ink/mist = surfaces & borders; zinc = text; spectral/halo = foreground accent.
+ * R = G = B throughout so there is zero warm cast on backgrounds or text.
  * ------------------------------------------------------------------------- */
 :root {
-  /* LIGHT = "broken white": a neutral off-white ground (only the faintest warm
-     tint), near-black neutral text, and the same gold accent kept for contrast.
-     Backgrounds are the high mist/zinc shades; text is the low shades. */
-  --mist-50: 26 25 23;
-  --mist-100: 33 32 30;
-  --mist-200: 45 44 41;
-  --mist-300: 62 61 57;
-  --mist-400: 92 90 85;
-  --mist-500: 120 118 112;
-  --mist-600: 150 148 142;
-  --mist-700: 184 182 175;
-  --mist-750: 205 203 197;
-  --mist-800: 220 218 212;
-  --mist-850: 231 229 224;
-  --mist-900: 240 239 235;
-  --mist-950: 246 245 242;
+  /* LIGHT — near-white background, near-black text */
+  --mist-50:  25 25 25;
+  --mist-100: 32 32 32;
+  --mist-200: 43 43 43;
+  --mist-300: 60 60 60;
+  --mist-400: 89 89 89;
+  --mist-500: 117 117 117;
+  --mist-600: 147 147 147;
+  --mist-700: 180 180 180;
+  --mist-750: 202 202 202;
+  --mist-800: 217 217 217;
+  --mist-850: 228 228 228;
+  --mist-900: 238 238 238;
+  --mist-950: 246 246 246;
 
-  --halo: 34 33 31;
-  --halo-soft: 24 23 21;
-  --halo-dim: 108 106 102;
-  --halo-glow: 40 39 36;
-  --halo-deep: 150 148 143;
+  --halo: 33 33 33;
+  --halo-soft: 22 22 22;
+  --halo-dim: 105 105 105;
+  --halo-glow: 38 38 38;
+  --halo-deep: 147 147 147;
 
   --patina-300: 176 138 46;
   --patina-400: 158 128 46;
   --patina-500: 124 99 34;
 
-  --zinc-50: 26 25 23;
-  --zinc-100: 33 32 30;
-  --zinc-200: 45 44 41;
-  --zinc-300: 62 61 57;
-  --zinc-400: 92 90 85;
-  --zinc-500: 120 118 112;
-  --zinc-600: 150 148 142;
-  --zinc-700: 184 182 175;
-  --zinc-800: 220 218 212;
-  --zinc-900: 236 235 231;
-  --zinc-950: 246 245 242;
+  --zinc-50:  25 25 25;
+  --zinc-100: 32 32 32;
+  --zinc-200: 43 43 43;
+  --zinc-300: 60 60 60;
+  --zinc-400: 89 89 89;
+  --zinc-500: 117 117 117;
+  --zinc-600: 147 147 147;
+  --zinc-700: 180 180 180;
+  --zinc-800: 217 217 217;
+  --zinc-900: 234 234 234;
+  --zinc-950: 246 246 246;
 }
 
 .dark {
-  --mist-50: 243 240 231;
-  --mist-100: 233 228 213;
-  --mist-200: 214 208 188;
-  --mist-300: 187 180 158;
-  --mist-400: 154 149 131;
-  --mist-500: 120 115 95;
-  --mist-600: 86 82 67;
-  --mist-700: 59 56 45;
-  --mist-750: 48 46 36;
-  --mist-800: 36 34 27;
-  --mist-850: 28 26 20;
-  --mist-900: 22 21 15;
-  --mist-950: 15 14 9;
+  /* DARK — near-black background, near-white text */
+  --mist-50:  238 238 238;
+  --mist-100: 225 225 225;
+  --mist-200: 203 203 203;
+  --mist-300: 175 175 175;
+  --mist-400: 145 145 145;
+  --mist-500: 110 110 110;
+  --mist-600: 78 78 78;
+  --mist-700: 53 53 53;
+  --mist-750: 43 43 43;
+  --mist-800: 32 32 32;
+  --mist-850: 25 25 25;
+  --mist-900: 19 19 19;
+  --mist-950: 13 13 13;
 
-  --halo: 237 235 230;
-  --halo-soft: 247 246 242;
-  --halo-dim: 182 179 172;
-  --halo-glow: 242 240 235;
-  --halo-deep: 110 107 100;
+  --halo: 234 234 234;
+  --halo-soft: 246 246 246;
+  --halo-dim: 178 178 178;
+  --halo-glow: 240 240 240;
+  --halo-deep: 106 106 106;
 
   --patina-300: 214 197 124;
   --patina-400: 191 162 76;
   --patina-500: 156 127 48;
 
-  --zinc-50: 246 243 234;
-  --zinc-100: 236 231 217;
-  --zinc-200: 216 210 191;
-  --zinc-300: 187 180 158;
-  --zinc-400: 148 143 125;
-  --zinc-500: 114 110 92;
-  --zinc-600: 82 78 65;
-  --zinc-700: 59 56 45;
-  --zinc-800: 36 34 27;
-  --zinc-900: 22 21 15;
-  --zinc-950: 15 14 9;
+  --zinc-50:  241 241 241;
+  --zinc-100: 228 228 228;
+  --zinc-200: 206 206 206;
+  --zinc-300: 175 175 175;
+  --zinc-400: 139 139 139;
+  --zinc-500: 105 105 105;
+  --zinc-600: 75 75 75;
+  --zinc-700: 53 53 53;
+  --zinc-800: 32 32 32;
+  --zinc-900: 19 19 19;
+  --zinc-950: 13 13 13;
 }
 
 @layer base {
@@ -110,12 +109,11 @@
 
   body {
     @apply min-h-screen bg-ink-950 font-sans text-zinc-300;
-    /* Warm gold haze (the sun through fog) + a fine fractal-noise grain in the
-       negative space. Cards sit cleanly on top of the texture. */
+    /* Subtle fractal-noise grain over the neutral background. */
     background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E"),
-      radial-gradient(60rem 40rem at 50% -14rem, rgba(232, 230, 224, 0.07), transparent 60%),
-      radial-gradient(42rem 32rem at 86% 2rem, rgba(232, 230, 224, 0.04), transparent 58%);
+      radial-gradient(60rem 40rem at 50% -14rem, rgba(255, 255, 255, 0.03), transparent 60%),
+      radial-gradient(42rem 32rem at 86% 2rem, rgba(255, 255, 255, 0.015), transparent 58%);
     background-repeat: repeat, no-repeat, no-repeat;
     background-size: 140px 140px, auto, auto;
     background-blend-mode: overlay, normal, normal;
@@ -210,10 +208,10 @@
     line-height: 0.98;
   }
 
-  /* The cream spread that closes the film — same world as the landing footer. */
+  /* Footer panel — neutral light gray in both themes. */
   .cream-panel {
-    @apply relative overflow-hidden text-[#1b1610];
-    background: #f4efe4;
+    @apply relative overflow-hidden text-[#1f1f1f];
+    background: #f0f0f0;
   }
 }
 

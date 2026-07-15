@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
+import { useIsDark } from '../hooks/useTheme'
 import {
   createChart,
   CandlestickSeries,
@@ -14,8 +15,6 @@ import {
 // preview is stable; when a live reference price is known the whole series is
 // rescaled so its last close sits on that price — the dark-pool testnet has no
 // historical feed of its own.
-const UP = '#d9c9a3'
-const DOWN = '#a06a52'
 
 function mockCandles(seed: string, anchor?: number, n = 90): CandlestickData[] {
   let s = 0
@@ -49,6 +48,7 @@ function mockCandles(seed: string, anchor?: number, n = 90): CandlestickData[] {
 }
 
 export function PriceChart({ pair, price }: { pair: string; price?: number | null }) {
+  const isDark = useIsDark()
   const containerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
@@ -57,36 +57,41 @@ export function PriceChart({ pair, price }: { pair: string; price?: number | nul
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
+    const up     = isDark ? '#d6c57c' : '#b08a2e'
+    const down   = isDark ? '#fca5a5' : '#dc2626'
+    const text   = isDark ? '#888888' : '#666666'
+    const grid   = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
+    const border = isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.09)'
     const chart = createChart(el, {
       autoSize: true,
       layout: {
         background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: '#8f8672',
+        textColor: text,
         fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, monospace",
         attributionLogo: false,
       },
       grid: {
-        vertLines: { color: 'rgba(239,233,220,0.04)' },
-        horzLines: { color: 'rgba(239,233,220,0.04)' },
+        vertLines: { color: grid },
+        horzLines: { color: grid },
       },
-      rightPriceScale: { borderColor: 'rgba(239,233,220,0.08)' },
-      timeScale: { borderColor: 'rgba(239,233,220,0.08)', timeVisible: true, secondsVisible: false },
+      rightPriceScale: { borderColor: border },
+      timeScale: { borderColor: border, timeVisible: true, secondsVisible: false },
       crosshair: { mode: 0 },
     })
     chartRef.current = chart
     seriesRef.current = chart.addSeries(CandlestickSeries, {
-      upColor: UP,
-      downColor: DOWN,
+      upColor: up,
+      downColor: down,
       borderVisible: false,
-      wickUpColor: UP,
-      wickDownColor: DOWN,
+      wickUpColor: up,
+      wickDownColor: down,
     })
     return () => {
       chart.remove()
       chartRef.current = null
       seriesRef.current = null
     }
-  }, [])
+  }, [isDark])
 
   useEffect(() => {
     const chart = chartRef.current
@@ -94,7 +99,7 @@ export function PriceChart({ pair, price }: { pair: string; price?: number | nul
     if (!chart || !series) return
     series.setData(candles)
     chart.timeScale().fitContent()
-  }, [candles])
+  }, [candles, isDark])
 
   return <div ref={containerRef} className="h-full min-h-[260px] w-full" />
 }

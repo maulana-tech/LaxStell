@@ -1,21 +1,20 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import ScrollStack, { ScrollStackItem } from './ScrollStack'
 import { BentoSection, SystemArchitecture } from './StorySections'
 import hourglassUrl from '../assets/hourglass.webp'
 import hourglassPoster from '../assets/hourglass-poster.webp'
 import balanceUrl from '../assets/balance.webp'
 import balancePoster from '../assets/balance-poster.webp'
-import lockUrl from '../assets/lock.webp'
-import lockPoster from '../assets/lock-poster.webp'
+import cubeUrl from '../assets/cube.webp'
+import cubePoster from '../assets/cube-poster.webp'
+import { useIsDark } from '../hooks/useTheme'
 
 // Light-speck film grain for the dark ground (white noise, low alpha) — matches
 // the hero's grain so the whole dark landing reads as one surface.
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.35 0.35 0.35 0 -0.36'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E\")"
 
-// One card per section — holds the gif and the text together.
-const CARD = 'relative rounded-[1.75rem] border border-[#efe9dc]/10 px-6 py-10 sm:px-10 sm:py-12'
-const CARD_BG: CSSProperties = { background: 'rgba(239,233,220,0.04)' }
+
 
 /** The three narrative beats, presented as a ScrollStack: each card pins near the
  *  top and scales/stacks under the next as you scroll. `flip` puts the loop on
@@ -47,8 +46,8 @@ const STACK = [
     coord: '[ UltraHonk · BN254 ]',
     title: 'the math is the lock.',
     body: 'every move out is a zero-knowledge proof, checked on-chain inside a Soroban contract. a spend reveals only a nullifier, so the old note and the new never link. no valid proof, no funds move.',
-    src: lockUrl,
-    poster: lockPoster,
+    src: cubeUrl,
+    poster: cubePoster,
     flip: false,
   },
 ]
@@ -80,31 +79,44 @@ function Label({ children, className = '' }: { children: ReactNode; className?: 
 }
 
 export function StoryShielded({ onEnter }: { onEnter: () => void }) {
+  const dark = useIsDark()
+  const cardClassName = `relative rounded-[1.75rem] border px-6 py-10 sm:px-10 sm:py-12 ${
+    dark ? 'border-[#efe9dc]/10' : 'border-[#211b12]/10'
+  }`
+  const cardBg = { background: dark ? 'rgba(239,233,220,0.04)' : 'rgba(33,27,18,0.03)' }
+
   return (
-    <section className="relative w-full overflow-hidden bg-[#17120b] px-6 py-32 text-[#c8bfac] sm:px-8 md:py-40">
+    <section
+      className="relative w-full overflow-hidden px-6 py-32 sm:px-8 md:py-40 transition-colors duration-300"
+      style={{
+        backgroundColor: dark ? '#17120b' : '#efe9dc',
+        color: dark ? '#c8bfac' : '#5c5446',
+      }}
+    >
       <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-50"
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
           backgroundImage: GRAIN,
           backgroundSize: '90px 90px',
           maskImage: 'linear-gradient(to bottom, transparent, #000 16rem)',
           WebkitMaskImage: 'linear-gradient(to bottom, transparent, #000 16rem)',
+          opacity: dark ? 0.5 : 0.2,
         }}
       />
 
       <div className="relative z-10 mx-auto max-w-6xl">
         {/* intro */}
         <Label>
-          <span className="text-[#d8cfba]">public ledger</span>
-          <span aria-hidden className="text-[#b3a081]">→</span>
-          <span className="text-[#d8cfba]">shielded layer</span>
+          <span className="text-[#211b12]/80 dark:text-[#d8cfba]">public ledger</span>
+          <span aria-hidden className="text-[#8e7a5c] dark:text-[#b3a081]">→</span>
+          <span className="text-[#211b12]/80 dark:text-[#d8cfba]">shielded layer</span>
         </Label>
         <h2
-          className="mt-8 max-w-3xl font-display font-medium lowercase leading-[1.04] tracking-[-0.03em] text-[#f1ece0]"
+          className="mt-8 max-w-3xl font-display font-medium lowercase leading-[1.04] tracking-[-0.03em] text-[#211b12] dark:text-[#f1ece0]"
           style={{ fontSize: 'clamp(2rem, 5.4vw, 3.6rem)' }}
         >
           public chains remember everything.{' '}
-          <span className="text-[#c8bfac]">the shielded layer forgets.</span>
+          <span className="text-[#5c5446] dark:text-[#c8bfac]">the shielded layer forgets.</span>
         </h2>
 
         {/* Three narrative beats as a pinned, scaling card stack (React Bits
@@ -123,7 +135,11 @@ export function StoryShielded({ onEnter }: { onEnter: () => void }) {
             {STACK.map((s) => (
               <ScrollStackItem
                 key={s.n}
-                itemClassName="flex min-h-[72vh] items-center rounded-[1.75rem] border border-[#efe9dc]/10 bg-[#221b12] px-6 py-12 shadow-[0_30px_80px_-32px_rgba(0,0,0,0.6)] sm:px-14 sm:py-16"
+                itemClassName={`flex min-h-[72vh] items-center rounded-[1.75rem] border px-6 py-12 sm:px-14 sm:py-16 transition-colors duration-300 ${
+                  dark
+                    ? 'border-[#efe9dc]/10 bg-[#221b12] shadow-[0_30px_80px_-32px_rgba(0,0,0,0.6)]'
+                    : 'border-[#211b12]/10 bg-[#f5eedf] shadow-[0_30px_80px_-32px_rgba(33,27,18,0.15)]'
+                }`}
               >
                 <div className="grid w-full grid-cols-1 items-center gap-x-12 gap-y-8 md:grid-cols-2">
                   <div className={`mx-auto w-[clamp(210px,32vw,380px)] ${s.flip ? 'md:order-1' : 'md:order-2'}`}>
@@ -131,13 +147,13 @@ export function StoryShielded({ onEnter }: { onEnter: () => void }) {
                   </div>
                   <div className={`max-w-md ${s.flip ? 'md:order-2' : 'md:order-1'}`}>
                     <Label>
-                      <span className="text-[#d8cfba]">{s.n} · {s.label}</span>
-                      <span className="text-[#8f846b]">{s.coord}</span>
+                      <span className="text-[#211b12] dark:text-[#d8cfba]">{s.n} · {s.label}</span>
+                      <span className="text-[#8e7a5c] dark:text-[#8f846b]">{s.coord}</span>
                     </Label>
-                    <h3 className="mt-5 font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-medium lowercase leading-[1.05] tracking-[-0.02em] text-[#f1ece0]">
+                    <h3 className="mt-5 font-display text-[clamp(1.6rem,3.4vw,2.4rem)] font-medium lowercase leading-[1.05] tracking-[-0.02em] text-[#211b12] dark:text-[#f1ece0]">
                       {s.title}
                     </h3>
-                    <p className="mt-5 text-[15px] font-medium leading-relaxed text-[#c8bfac]">{s.body}</p>
+                    <p className="mt-5 text-[15px] font-medium leading-relaxed text-[#5c5446] dark:text-[#c8bfac]">{s.body}</p>
                   </div>
                 </div>
               </ScrollStackItem>
@@ -152,13 +168,21 @@ export function StoryShielded({ onEnter }: { onEnter: () => void }) {
         <SystemArchitecture />
 
         {/* modules + CTA — one card */}
-        <div className={`mt-8 ${CARD}`} style={CARD_BG}>
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[1rem] border border-[#efe9dc]/12 bg-[#efe9dc]/12 sm:grid-cols-4">
+        <div className={cardClassName} style={cardBg}>
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[1rem] border border-[#211b12]/12 dark:border-[#efe9dc]/12 bg-[#211b12]/12 dark:bg-[#efe9dc]/12 sm:grid-cols-4">
             {MODULES.map((m) => (
-              <a key={m.k} href={`#${m.to}`} className="group block bg-[#221b12] px-5 py-7 transition hover:bg-[#2a2217]">
-                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#d8cfba]">{m.k}</div>
-                <p className="mt-3 text-[13px] leading-relaxed text-[#c8bfac]">{m.d}</p>
-                <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.18em] text-[#8a7f68] transition-colors group-hover:text-[#c9b489]">
+              <a
+                key={m.k}
+                href={`#${m.to}`}
+                className={`group block px-5 py-7 transition ${
+                  dark
+                    ? 'bg-[#221b12] hover:bg-[#2a2217]'
+                    : 'bg-[#f5eedf] hover:bg-[#ebe1cf]'
+                }`}
+              >
+                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#211b12] dark:text-[#d8cfba]">{m.k}</div>
+                <p className="mt-3 text-[13px] leading-relaxed text-[#5c5446] dark:text-[#c8bfac]">{m.d}</p>
+                <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-[0.18em] text-[#8e7a5c] transition-colors group-hover:text-[#826e51] dark:text-[#8a7f68] dark:group-hover:text-[#c9b489]">
                   open →
                 </span>
               </a>
@@ -166,7 +190,7 @@ export function StoryShielded({ onEnter }: { onEnter: () => void }) {
           </div>
           <button
             onClick={onEnter}
-            className="mt-10 font-mono text-[12px] uppercase tracking-[0.18em] text-[#8a7f68] transition hover:text-[#c9b489]"
+            className="mt-10 font-mono text-[12px] uppercase tracking-[0.18em] text-[#8e7a5c] transition hover:text-[#826e51] dark:text-[#8a7f68] dark:hover:text-[#c9b489]"
           >
             enter the shielded layer →
           </button>

@@ -8,7 +8,7 @@ import type {
 import { cx } from '../lib/cx'
 import type { AssetCode } from '../lib/lax-stell-sdk'
 import { truncateKey } from '../lib/format'
-import { CoinBadge, LaxStellMark } from './BrandIcons'
+import { CoinBadge, LaxStellSpinnerMark } from './BrandIcons'
 
 // The lax-stell mark lives with the other brand glyphs; re-exported so `import
 // { LaxStellMark } from './ui'` call sites resolve here.
@@ -101,7 +101,9 @@ export function ChartIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 export function Spinner({ className }: { className?: string }) {
-  return <LaxStellMark className={cx('animate-spin', className)} />
+  // Uses the compact original spark-mark (square viewBox) so the spin animation
+  // looks clean. The display LaxStellMark (wider viewBox + mask) is for branding.
+  return <LaxStellSpinnerMark className={cx('animate-spin', className)} />
 }
 
 // --- Primitives -------------------------------------------------------------

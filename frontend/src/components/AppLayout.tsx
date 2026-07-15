@@ -7,6 +7,8 @@ import { cx } from '../lib/cx'
 import { BrandCanvas } from './BrandCanvas'
 import { ConnectWallet } from './ConnectWallet'
 import { EyeGlyph, LaxStellMark } from './ui'
+import logoDark from '../assets/logo-dark.png'
+import logoLight from '../assets/logo-light.png'
 import { ScrambleNumber } from './ScrambleNumber'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -43,9 +45,11 @@ function AppNav() {
   return (
     <header className="sticky top-0 z-40 px-4 pt-4">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 rounded-2xl bg-ink-900/75 px-5 py-2.5 shadow-[0_12px_34px_-12px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-        <NavLink to="/app" className="flex items-center gap-2">
-          <LaxStellMark className="h-5 w-5 text-spectral" />
-          <span className="font-display text-sm font-semibold tracking-tight text-spectral-soft">
+        <NavLink to="/app" className="flex items-center gap-2.5">
+          {/* Light logo for light mode, dark logo for dark mode */}
+          <img src={logoLight} alt="Lax-Stell" className="h-12 w-auto dark:hidden" />
+          <img src={logoDark} alt="Lax-Stell" className="hidden h-12 w-auto dark:block" />
+          <span className="font-display text-base font-semibold tracking-tight text-spectral-soft">
             lax-stell <sup className="align-super font-mono text-[9px] tracking-[0.2em] text-spectral/60">ZK</sup>
           </span>
         </NavLink>
@@ -100,20 +104,22 @@ function AppFooter() {
         }}
       />
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-5 px-8 py-8 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <LaxStellMark className="h-7 w-7 shrink-0" style={{ filter: 'brightness(0)', opacity: 0.85 }} />
-          <p className="max-w-[18rem] text-[12.5px] font-normal leading-relaxed text-[#1b1610]/70">
+        <div className="flex items-center gap-4">
+          <NavLink to="/" className="transition hover:opacity-75">
+            <LaxStellMark className="h-36 w-36 shrink-0" style={{ filter: 'brightness(0)', opacity: 0.85 }} />
+          </NavLink>
+          <p className="max-w-[18rem] text-[12.5px] font-normal leading-relaxed text-[#1f1f1f]/70">
             Private money on Stellar. Bridge in, hold, pay and trade — proven on-chain, never revealed.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-[#1b1610]/55">
-          <NavLink to="/faucet" className="transition hover:text-[#1b1610]">
+          <NavLink to="/faucet" className="transition hover:text-[#1f1f1f]">
             Faucet
           </NavLink>
-          <button type="button" onClick={() => void clearLocalData()} className="uppercase transition hover:text-[#1b1610]">
+          <button type="button" onClick={() => void clearLocalData()} className="uppercase transition hover:text-[#1f1f1f]">
             Clear data
           </button>
-          <span className="text-[#1b1610]/45">© Lax-Stell 2026</span>
+          <span className="text-[#1f1f1f]/40">© Lax-Stell 2026</span>
         </div>
       </div>
     </footer>
@@ -139,7 +145,7 @@ export function AppLayout() {
         className="pointer-events-none relative h-[30rem]"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(244,239,228,0) 0%, rgba(244,239,228,0) 20%, rgba(244,239,228,0.14) 42%, rgba(244,239,228,0.42) 62%, rgba(244,239,228,0.74) 78%, rgba(244,239,228,0.93) 91%, #f4efe4 100%)',
+            'linear-gradient(to bottom, rgba(240,240,240,0) 0%, rgba(240,240,240,0) 20%, rgba(240,240,240,0.14) 42%, rgba(240,240,240,0.42) 62%, rgba(240,240,240,0.74) 78%, rgba(240,240,240,0.93) 91%, #f0f0f0 100%)',
         }}
       />
       <AppFooter />

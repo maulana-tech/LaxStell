@@ -16,14 +16,7 @@ import { ReceivePage } from './pages/ReceivePage'
 
 function LandingRoute() {
   const navigate = useNavigate()
-  // The landing is a fixed cinematic dark world (WebGL + film grain + fixed
-  // sepia hexes). It always renders dark, regardless of the app's light/dark
-  // toggle — so its themed bits (scramble type, etc.) stay legible on the dark field.
-  return (
-    <div className="dark">
-      <Landing onEnter={() => navigate('/app')} />
-    </div>
-  )
+  return <Landing onEnter={() => navigate('/app')} />
 }
 
 export default function App() {
