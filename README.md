@@ -312,10 +312,9 @@ Verify the complete deposit and ZK-withdraw loop against the live testnet contra
 
 | | |
 |---|---|
-| **Event** | Stellar Hacks: Real-World ZK (DoraHacks) |
+| **Event** | Stellar Hacks:(APAC Stellar ) |
 | **Track** | Payment & Consumer Applications / DeFi & Ecosystem Composability |
 | **Network** | Stellar Testnet |
-| **Submission** | [SUBMISSION.md](./SUBMISSION.md) |
 
 ---
 
