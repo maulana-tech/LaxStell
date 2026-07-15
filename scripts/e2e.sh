@@ -7,7 +7,7 @@ cd "$(dirname "$0")/.."
 
 IDENT="${IDENT:-lax-stell-deployer}"
 NET="${NET:-testnet}"
-POOL=$(node -e "console.log(require('./deployments.json').contracts.laxStellPool)")
+POOL="${POOL:-$(node -e "console.log(require('./deployments.json').contracts.laxStellPoolMatchMemo.contract)")}"
 NATIVE=$(node -e "console.log(require('./deployments.json').contracts.assets.native)")
 DEPLOYER=$(stellar keys address "$IDENT")
 
