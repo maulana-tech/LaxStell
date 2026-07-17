@@ -50,7 +50,7 @@ function AppNav() {
           <img src={logoLight} alt="Lax-Stell" className="h-12 w-auto dark:hidden" />
           <img src={logoDark} alt="Lax-Stell" className="hidden h-12 w-auto dark:block" />
           <span className="font-display text-base font-semibold tracking-tight text-spectral-soft">
-            lax-stell <sup className="align-super font-mono text-[9px] tracking-[0.2em] text-spectral/60">ZK</sup>
+            lax-stell
           </span>
         </NavLink>
         <nav className="hidden items-center gap-5 font-mono text-[12px] font-semibold uppercase tracking-[0.12em] md:flex">
